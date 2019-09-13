@@ -8,11 +8,27 @@
       text-align: center;
     }
     #trash {
-      opacity: .2;
+      
       margin: 15px;
     }
+    #trash {width:375px;height:812px;padding:10px;border:1px solid #aaaaaa;}
+    .nomal{
+      border:1px solid #aaaaaa;
+    }
+    .highlight{
+      border:1px solid green !important;
+    }
   </style>
+  <script src="//cdn.bootcss.com/eruda/1.5.2/eruda.min.js"></script>
 <script type="text/javascript">
+
+  function addClass(element, className) {
+    if(!new RegExp("(^|\\s)" + className + "(\\s|$)").test(element.className)) element.className += ' ' + className;
+  }
+  function removeClass(element, className) {
+    element.className = element.className.replace(new RegExp("(^|\\s)" + className + "(?=(\\s|$))", "g"), '');
+  }
+
     function guid() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
         var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
@@ -23,13 +39,18 @@
     //为目标对象添加事件监听 —— 删除拖动的源对象
     function ondragenter(e){ //源对象进入目标对象
         console.log("drag enter");
-        e.target.style.opacity = "1"; //将透明度变成1
+        console.log(e.target.style);
+        //e.target.style.opacity = "1"; //将透明度变成1
+        //e.target.style.border= '1px solid blue';
+        addClass(e.target,"highlight"); /*添加样式*/
     }
 
     //trash.addEventListener("οndragleave",οndragleave,false);
     function ondragleave(e){  //源对象离开目标对象后
         console.log('drag leave');
-        e.target.style.opacity = ".2"; //将透明度 变为0.2
+        //e.target.style.opacity = ".2"; //将透明度 变为0.2
+        //e.target.style.border= '1px solid #aaaaaa';
+        removeClass(e.target,"highlight"); /*添加样式*/
     }
     function ondragover(e){  //源对象在悬停在目标对象上时
         //console.log('drag οver');
@@ -37,10 +58,13 @@
     }
     function ondrop(e){ //源对象松手释放在了目标对象中
         console.log('drop');
-        if(e.target.id=="trash")
-          e.target.style.opacity = ".2"; //将透明度变为0.2
+        //if(e.target.id=="trash")
+        removeClass(e.target,"highlight"); /*添加样式*/
+          //e.target.style.border= '1px solid #aaaaaa';
+          //e.target.style.opacity = ".2"; //将透明度变为0.2
         //删除被拖动的源对象
         var id = e.dataTransfer.getData('PlaneID');//得到数据--id值
+        console.log(e.target);
         var p = document.getElementById(id); //根据id值找到相关的元素
         console.log(p);
         //p.parentNode.removeChild(p);  //从父元素中删除子节点
@@ -52,15 +76,19 @@
         }
         newNode.ondragover=ondragover;
         newNode.ondrop=ondrop;
-        e.target.parentNode.insertBefore(newNode,e.target);
         if(e.target.id!="trash")
-          p.parentNode.removeChild(p);  //从父元素中删除子节点
+          e.target.parentNode.insertBefore(p,e.target);
+        else
+          e.target.appendChild(newNode);
+        //if(e.target.id!="trash")
+        //  p.parentNode.removeChild(p);  //从父元素中删除子节点
     }
 </script>
 </head>
 <body id="main">
   <h3>拖动飞机到垃圾桶后从DOM树中删除子元素</h3>
-  <img id="trash"  src="img/loading.gif" style="width:200;height:200;">
+  <!--<img id="trash"  src="img/loading.gif" style="width:200;height:200;">-->
+  <div id="trash" ></div>
   <hr/>
   <img id="p3" class="src" src="img/warning.png">
   <img id="p4" class="src" src="img/success.png">
@@ -86,5 +114,6 @@
     trash.ondragover=ondragover;
     trash.ondrop=ondrop;
   </script>
+  <script>eruda.init();</script>
 </body>
 </html>
